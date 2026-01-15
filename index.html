@@ -76,6 +76,7 @@
     font-size: 20px;
     animation: fly 4s linear forwards;
     z-index: 1;
+    pointer-events: none;
   }
 
   @keyframes fly {
@@ -86,8 +87,8 @@
 </head>
 <body>
 
-<audio id="music" loop>
-  <source src="https://pagalfree.com/musics/128-Pal%20Pal%20Dil%20Ke%20Paas%20-%20Arijit%20Singh%20128%20Kbps.mp3?v=2" type="audio/mpeg">
+<audio id="music" preload="auto" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
 </audio>
 
 <div class="card" id="content">
@@ -96,12 +97,13 @@
   <h3>Will you be my bacchar ma? 👶❤️</h3>
 
   <div class="btn-container">
-    <button class="yes" onclick="yesClick()">Yes 💖</button>
+    <button class="yes" id="yesBtn">Yes 💖</button>
     <button class="no" id="noBtn" onmouseover="moveNo()" onclick="moveNo()">No 😢</button>
   </div>
 </div>
 
 <script>
+  // NO Button movement
   function moveNo() {
     const btn = document.getElementById("noBtn");
     btn.style.position = "fixed";
@@ -112,11 +114,20 @@
     btn.style.top = Math.max(padding/2, y) + "px";
   }
 
-  function yesClick() {
-    document.body.style.background = "#1a0000";
+  // YES Click handler
+  document.getElementById("yesBtn").onclick = function() {
     const audio = document.getElementById("music");
-    audio.load(); // Gaan-ta notun kore load korar jonno
-    audio.play();
+    
+    // Gaan chalu korar jonno forced try
+    audio.play().then(() => {
+        console.log("Music started!");
+    }).catch(error => {
+        console.log("Playback failed. User interaction needed.");
+        // Audio block hole abar trigger korbe
+        audio.play(); 
+    });
+
+    document.body.style.background = "#1a0000";
 
     document.getElementById("content").innerHTML = `
       <h2 style="color: #ff2e63; font-size: 26px;">My Queen Shayla... 🔥</h2>
@@ -141,7 +152,7 @@ You are mine, only mine. 💍`;
 
     typeWriter(text);
     setInterval(createHeart, 300);
-  }
+  };
 
   function typeWriter(text) {
     let i = 0;
